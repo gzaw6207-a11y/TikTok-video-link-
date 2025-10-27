@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Link Tracker AI - Advanced</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.5s;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-row {
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active { transform: translateY(0); }
+        
+        .btn-primary { width: 100%; padding: 15px; font-size: 16px; }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+            margin-right: 5px;
+        }
+        
+        .btn-delete { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .btn-copy { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .btn-edit { background: linear-gradient(135deg, #ffa751 0%, #ffe259 100%); }
+        .btn-export { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            animation: scaleIn 0.5s;
+        }
+        
+        .stat-card h3 { font-size: 2.2em; margin-bottom: 5px; }
+        .stat-card p { opacity: 0.9; font-size: 0.9em; }
+        
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .toolbar select {
+            width: auto;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .search-box {
+            position: relative;
+            flex: 2;
+            min-width: 200px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding-right: 35px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .tags-input-container {
+            position: relative;
+        }
+        
+        .popular-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .popular-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .popular-tag:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .link-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+            animation: slideIn 0.3s;
+        }
+        
+        .link-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .link-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        
+        .link-url {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            word-break: break-all;
+            flex: 1;
+            font-size: 15px;
+        }
+        
+        .link-url:hover { text-decoration: underline; }
+        
+        .link-actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .link-note {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            border-left: 3px solid #4facfe;
+            color: #333;
+        }
+        
+        .link-note strong { color: #667eea; }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0;
+        }
+        
+        .tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tag:hover {
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .time-badge {
+            background: #667eea;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+            animation: slideInRight 0.3s;
+        }
+        
+        .toast.show { display: block; }
+        
+        .toast.success { background: #28a745; }
+        .toast.error { background: #dc3545; }
+        .toast.warning { background: #ffc107; color: #333; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-close {
+            background: #e0e0e0;
+            color: #333;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .card { padding: 20px; }
+            .stats { grid-template-columns: 1fr; }
+            .toolbar { flex-direction: column; }
+            .toolbar select, .search-box { width: 100%; }
+            .link-header { flex-direction: column; }
+            .link-actions { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 TikTok Link Tracker AI</h1>
+            <p>Advanced link management with tags, notes & analytics</p>
+        </div>
+
+        <!-- Add Link Card -->
+        <div class="card">
+            <h2 class="section-title">📤 Add New TikTok Link</h2>
+            
+            <div class="input-row">
+                <label class="input-label">🔗 TikTok URL *</label>
+                <input type="text" id="urlInput" placeholder="https://www.tiktok.com/@username/video/..." autocomplete="off">
+            </div>
+
+            <div class="input-row">
+                <label class="input-label">📝 Note (Optional)</label>
+                <textarea id="noteInput" placeholder="Add a description, context, or any notes about this video..."></textarea>
+            </div>
+
+            <div class="input-row tags-input-container">
+                <label class="input-label">🏷️ Tags (Optional)</label>
+                <input type="text" id="tagsInput" placeholder="dance, funny, tutorial, trending (comma separated)" autocomplete="off">
+                <div class="popular-tags" id="popularTags"></div>
+            </div>
+
+            <button class="btn-primary" onclick="addLink()">➕ Add Link</button>
+        </div>
+
+        <!-- Statistics Card -->
+        <div class="card">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3 id="totalLinks">0</h3>
+                    <p>Total Links</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalTags">0</h3>
+                    <p>Unique Tags</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="todayLinks">0</h3>
+                    <p>Added Today</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="weekLinks">0</h3>
+                    <p>This Week</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar & Search -->
+        <div class="card">
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Search by URL, tags, notes..." oninput="searchLinks()">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <select id="sortSelect" onchange="sortLinks()">
+                    <option value="newest">📅 Newest First</option>
+                    <option value="oldest">📅 Oldest First</option>
+                    <option value="url">🔗 URL (A-Z)</option>
+                </select>
+                <select id="filterSelect" onchange="filterByTag()">
+                    <option value="all">🏷️ All Tags</option>
+                </select>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-small btn-export" onclick="exportData()">📥 Export</button>
+                <button class="btn-small btn-export" onclick="document.getElementById('importFile').click()">📤 Import</button>
+                <button class="btn-small btn-delete" onclick="clearAll()">🗑️ Clear All</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+        </div>
+
+        <!-- Links List -->
+        <div class="card">
+            <h2 class="section-title">📋 Your TikTok Links (<span id="linkCount">0</span>)</h2>
+            <div id="linksList"></div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Edit Link</h2>
+                <div class="modal-close" onclick="closeEditModal()">×</div>
+            </div>
+            <div class="input-row">
+                <label class="input-label">🔗 URL</label>
+                <input type="text" id="editUrl">
+            </div>
+            <div class="input-row">
+                <label class="input-label">📝 Note</label>
+                <textarea id="editNote"></textarea>
+            </div>
+            <div class="input-row">
+                <label class="input-label">🏷️ Tags</label>
+                <input type="text" id="editTags">
+            </div>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="saveEdit()">💾 Save Changes</button>
+                <button class="btn-small btn-delete" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let links = JSON.parse(localStorage.getItem('tiktokLinks')) || [];
+        let currentEditId = null;
+
+        // Add new link
+        function addLink() {
+            const url = document.getElementById('urlInput').value.trim();
+            const note = document.getElementById('noteInput').value.trim();
+            const tagsInput = document.getElementById('tagsInput').value.trim();
+
+            if (!url) {
+                showToast('⚠️ Please enter a TikTok URL!', 'warning');
+                return;
+            }
+
+            if (!url.includes('tiktok.com') && !url.includes('vm.tiktok.com')) {
+                showToast('❌ Please enter a valid TikTok URL!', 'error');
+                return;
+            }
+
+            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+            const now = new Date();
+
+            const linkData = {
+                id: Date.now(),
+                url: url,
+                note: note,
+                tags: tags,
+                timestamp: now.toISOString(),
+                dateAdded: now.toLocaleDateString(),
+                timeAdded: now.toLocaleTimeString(),
+                fullDateTime: now.toLocaleString()
+            };
+
+            links.unshift(linkData);
+            saveToStorage();
+            clearInputs();
+            renderLinks();
+            updateStats();
+            updatePopularTags();
+            updateFilterDropdown();
+            showToast('✅ Link added successfully!', 'success');
+        }
+
+        // Clear input fields
+        function clearInputs() {
+            document.getElementById('urlInput').value = '';
+            document.getElementById('noteInput').value = '';
+            document.getElementById('tagsInput').value = '';
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            localStorage.setItem('tiktokLinks', JSON.stringify(links));
+        }
+
+        // Render links
+        function renderLinks(filtered = null) {
+            const list = filtered !== null ? filtered : links;
+            const container = document.getElementById('linksList');
+            document.getElementById('linkCount').textContent = list.length;
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>No links found</h3>
+                        <p>Add your first TikTok link or adjust your filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map(link => `
+                <div class="link-item">
+                    <div class="link-header">
+                        <a href="${link.url}" target="_blank" class="link-url">${link.url}</a>
+                        <div class="link-actions">
+                            <button class="btn-small btn-copy" onclick="copyLink('${link.url}')">📋</button>
+                            <button class="btn-small btn-edit" onclick="editLink(${link.id})">✏️</button>
+                            <button class="btn-small btn-delete" onclick="deleteLink(${link.id})">🗑️</button>
+                       </div>
+                    </div>
+                    ${link.note ? `<div class="link-note"><strong>📝 Note:</strong> ${link.note}</div>` : ''}
+                    ${link.tags && link.tags.length > 0 ? `
+                        <div class="tags-container">
+                            ${link.tags.map(tag => `<span class="tag" onclick="quickFilter('${tag}')">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="link-meta">
+                        <div class="meta-item">
+                            <span>📅</span>
+                            <span class="time-badge">${link.dateAdded}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span>⏰</span>
+                            <span class="time-badge">${link.timeAdded}</span>
+                        </div>
+                        <div class="meta-item">
+  <span>🕐</span>
+                            <span>${getTimeAgo(link.timestamp)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalLinks').textContent = links.length;
+
+            const allTags = links.flatMap(l => l.tags || []);
+            const uniqueTags = [...new Set(allTags)];
+            document.getElementById('totalTags').textContent = uniqueTags.length;
+
+            const today = new Date().toLocaleDateString();
+            const todayCount = links.filter(l => l.dateAdded === today).length;
+            document.getElementById('todayLinks').textContent = todayCount;
+
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const weekCount = links.filter(l => new Date(l.timestamp) > weekAgo).length;
+            document.getElementById('weekLinks').textContent = weekCount;
+        }
+
+        // Update popular tags
+        function updatePopularTags() {
+            const tagCount = {};
+            links.forEach(link => {
+                (link.tags || []).forEach(tag => {
+                    tagCount[tag] = (tagCount[tag] || 0) + 1;
+                });
+            });
+
+            const sorted = Object.entries(tagCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            const container = document.getElementById('popularTags');
+            if (sorted.length > 0) {
+              container.innerHTML = '<div style="font-size:12px;color:#999;margin:8px 0 5px 0;">💡 Popular tags (click to add):</div>' +
+                    sorted.map(([tag, count]) => 
+                        `<span class="popular-tag" onclick="addTagToInput('${tag}')">${tag} (${count})</span>`
+                    ).join('');
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        // Update filter dropdown
+        function updateFilterDropdown() {
+            const allTags = [...new Set(links.flatMap(l => l.tags || []))].sort();
+            const select = document.getElementById('filterSelect');
+            select.innerHTML = '<option value="all">🏷️ All Tags</option>' +
+                allTags.map(tag => `<option value="${tag}">${tag}</option>`).join('');
+        }
+
+        // Add tag to input
+        function addTagToInput(tag) {
+            const input = document.getElementById('tagsInput');
+            const current = input.value.trim();
+            input.value = current ? `${current}, ${tag}` : tag;
+            input.focus();
+        }
+
+        // Quick filter by tag
+        function quickFilter(tag) {
+            document.getElementById('searchInput').value = tag;
+            searchLinks();
+            showToast(`🔍 Filtered by: ${tag}`, 'success');
+        }
+
+        // Search links
+        function searchLinks() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            if (!term) {
+                renderLinks();
+                return;
+            }
+
+            const filtered = links.filter(link =>
+                link.url.toLowerCase().includes(term) ||
+                (link.note && link.note.toLowerCase().includes(term)) ||
+                (link.tags && link.tags.some(t => t.toLowerCase().includes(term))) ||
+                link.dateAdded.toLowerCase().includes(term) ||
+                link.timeAdded.toLowerCase().includes(term)
+            );
+
+            renderLinks(filtered);
+        }
+
+        // Sort links
+        function sortLinks() {
+            const sortBy = document.getElementById('sortSelect').value;
+            let sorted = [...links];
+
+            if (sortBy === 'newest') {
+                sorted.sort((a, b) => b.id - a.id);
+            } else if (sortBy === 'oldest') {
+                sorted.sort((a, b) => a.id - b.id);
+            } else if (sortBy === 'url') {
+                sorted.sort((a, b) => a.url.localeCompare(b.url));
+            }
+
+            renderLinks(sorted);
+            showToast('📊 Links sorted!', 'success');
+        }
+
+        // Filter by tag
+        function filterByTag() {
+            const tag = document.getElementById('filterSelect').value;
+            if (tag === 'all') {
+                renderLinks();
+                return;
+            }
+
+            const filtered = links.filter(link => link.tags && link.tags.includes(tag));
+            renderLinks(filtered);
+            showToast(`🏷️ Showing: ${tag}`, 'success');
+        }
+
+        // Copy link
+        function copyLink(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('📋 Link copied!', 'success');
+            }).catch(() => {
+                showToast('❌ Copy failed!', 'error');
+            });
+        }
+
+        // Edit link
+        function editLink(id) {
+            const link = links.find(l => l.id === id);
+            if (!link) return;
+
+            currentEditId = id;
+            document.getElementById('editUrl').value = link.url;
+            document.getElementById('editNote').value = link.note || '';
+            document.getElementById('editTags').value = (link.tags || []).join(', ');
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        // Save edit
+        function saveEdit() {
+            if (!currentEditId) return;
+
+            const link = links.find(l => l.id === currentEditId);
+            if (!link) return;
+
+            const newUrl = document.getElementById('editUrl').value.trim();
+            const newNote = document.getElementById('editNote').value.trim();
+            const newTags = document.getElementById('editTags').value.trim()
+                .split(',').map(t => t.trim()).filter(t => t);
+
+            if (!newUrl) {
+                showToast('⚠️ URL cannot be empty!', 'warning');
+                return;
+            }
+
+            link.url = newUrl;
+            link.note = newNote;
+            link.tags = newTags;
+
+            saveToStorage();
+            closeEditModal();
+            renderLinks();
+            updateStats();
+            updatePopularTags();
+            updateFilterDropdown();
+            showToast('✅ Link updated!', 'success');
+        }
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+            currentEditId = null;
+        }
+
+        // Delete link
+        function deleteLink(id) {
+            if (!confirm('❌ Delete this link permanently?')) return;
+
+            links = links.filter(l => l.id !== id);
+            saveToStorage();
+            renderLinks();
+            updateStats();
+            updatePopularTags();
+            updateFilterDropdown();
+            showToast('🗑️ Link deleted!', 'success');
+        }
+
+        // Clear all links
+        function clearAll() {
+            if (!confirm('⚠️ Delete ALL links? This cannot be undone!')) return;
+
+            links = [];
+            saveToStorage();
+            renderLinks();
+            updateStats();
+            updatePopularTags();
+            updateFilterDropdown();
+            showToast('🗑️ All links cleared!', 'success');
+        }
+
+        // Export data
+        function exportData() {
+            const data = JSON.stringify(links, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tiktok-links-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('📥 Data exported!', 'success');
+        }
+
+        // Import data
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!Array.isArray(imported)) throw new Error('Invalid format');
+                    
+                    
+                    links = imported;
+                    saveToStorage();
+                    renderLinks();
+                    updateStats();
+                    updatePopularTags();
+                    updateFilterDropdown();
+                    showToast('📤 Data imported!', 'success');
+                } catch (err) {
+                    showToast('❌ Invalid file format!', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Get time ago
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const past = new Date(timestamp);
+            const diff = now - past;
+            const mins = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (mins < 1) return 'Just now';
+            if (mins < 60) return `${mins}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+
+        // Show toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Enter key support
+        document.getElementById('urlInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter' && !e.shiftKey) addLink();
+        });
+
+        // Close modal on outside click
+        document.getElementById('editModal').addEventListener('click', e => {
+            if (e.target.id === 'editModal') closeEditModal();
+        });
+
+        // Initialize
+        window.onload = function() {
+            renderLinks();
+            updateStats();
+            updatePopularTags();
+            updateFilterDropdown();
+        };
+    </script>
+</body>
+</html>
